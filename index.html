@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="content-language" content="ja">
+<script>
+var DEBUG   = false;
+var UA      = window.navigator.userAgent.toLowerCase();
+var isIE    = UA.match(/msie/) || UA.match(/trident/);
+var isLocal = location.href.substring(0,5)==='file:';
+var src     = function(s){ return "./res/" + s }
+
+function init(){}
+function resize(){}
+//-----------------------------------
+// 汎用
+//-----------------------------------
+window.onload   = function(){ init(); resize(); }
+window.unonload = function(){ }
+window.onresize = function(){ resize(); }
+window.onscroll = function(){ resize(); }
+window.requestAnimationFrame = window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;
+function _$(id){return document.getElementById(id);}
+function _$c(a,b){return (a&&a.tagName?a:document).getElementsByClassName(a&&a.tagName?b:a)}
+function _$t(a,b){return (a&&a.tagName?a:document).getElementsByTagName(a&&a.tagName?b:a)}
+function log(arg0, arg1){ if(arg1 == undefined){ console.log(arg0); }else{ console.log(arg0, arg1); } }
+function rand(n){return Math.floor(Math.random()*n}
+function fmt(n){var h=Math.floor(n/3600),m=('0'+Math.floor(n/60%60)).slice(-2),s=('0'+Math.floor(n%60)).slice(-2);return (n>3600)?(h +':'+ m +':'+ s):(m +':'+ s);}
+function fmtByte(b,d){if(b==0) return "0 Byte";var k=1024,s=["Bytes","KB","MB","GB","TB","PB"],i=Math.floor(Math.log(b)/Math.log(k));return parseFloat((b/Math.pow(k,i)).toFixed(d))+" "+s[i];}
+</script>
+
+<style>
+*,
+*::before,
+*::after   { margin:0; padding:0; box-sizing:border-box; }
+body, html { width:100%; height:100%; background:#333; color:#FFF; overflow-x:hidden; }
+ol, ul     { list-style:none; }
+</style>
+<title></title>
+</head>
+<body>
+<div id="main">
+	hello
+</div>
+</body>
+</html>
