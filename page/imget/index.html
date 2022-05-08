@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="content-language" content="ja">
+
+<meta property="og:url" content="https://gharacter.github.io/page/imget" />
+<meta property="og:image" content="https://gharacter.github.io/page/imget/res/title.jpg" />
+<meta property="og:title" content="imget" />
+<meta property="og:description" content="ページ内の画像を一覧表示しzipで保存できるブックマークレット" />
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@gharacter" />
+
+<meta property="og:site_name" content="サイト名" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="fb:app_id" content="appIDを入力">
+<script>
+var DEBUG   = false;
+var UA      = window.navigator.userAgent.toLowerCase();
+var isIE    = UA.match(/msie/) || UA.match(/trident/);
+var isLocal = location.href.substring(0,5)==='file:';
+var isTouch = ('ontouchstart' in window || navigator.msPointerEnabled);
+var src     = function(s){ return "./res/" + s }
+
+
+function page(n){
+	var p = document.getElementsByClassName("page");
+	for(var i=0; i<p.length; i++){
+		p[i].style.display = (n==i) ? "block": "none";
+	}
+	document.getElementsByName("nav")[n].click();
+}
+
+function txtCopy(e, useHTML){
+	var target = e.parentNode.getElementsByClassName("copy")[0];
+	var textarea = document.createElement("textarea");
+	textarea.style.cssText = "position:absolute; top:0; left:0;";
+	textarea.textContent = useHTML ? target.innerHTML : target.innerText || target.textContent ;
+	document.body.appendChild(textarea);
+	textarea.select();
+	if( document.execCommand("Copy") ){
+		var btn = e;
+		var txt = btn.innerText ;
+		btn.innerText = "コピーしました";
+		btn.disabled = true;
+		setTimeout(function(){
+			btn.innerText = txt;
+			btn.disabled = false;
+		}, 1000);
+	}
+	textarea.parentNode.removeChild(textarea);
+}
+
+function init(){
+	var nav = document.getElementsByName("nav");
+	for(var i=0; i<nav.length; i++){
+		nav[i].addEventListener(isIE?"change":"input", function(e){
+			page( Number(e.target.value) );
+		}, false);
+	}
+	page(0);
+
+	var copyBtn = document.getElementsByClassName("copyBtn");
+	for(var i=0; i<copyBtn.length; i++){
+		copyBtn[i].addEventListener("click", function(e){
+			txtCopy( e.target );
+		}, false);
+	}
+}
+function resize(){
+}
+
+window.onload   = function(){ init(); resize(); }
+window.unonload = function(){ }
+window.onresize = function(){ resize(); }
+window.onscroll = function(){ resize(); }
+window.requestAnimationFrame = window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;
+Node.prototype.prependChild = function(e){this.insertBefore(e,this.firstChild)}
+function _$(id){return document.getElementById(id);}
+function _$c(a,b){return (a&&a.tagName?a:document).getElementsByClassName(a&&a.tagName?b:a)}
+function _$t(a,b){return (a&&a.tagName?a:document).getElementsByTagName(a&&a.tagName?b:a)}
+function log(arg0, arg1){ if(arg1 == undefined){ console.log(arg0); }else{ console.log(arg0, arg1); } }
+function rand(n){return Math.floor(Math.random()*n)}
+function copy(o){return JSON.parse(JSON.stringify(o))}
+function fmt(n){var h=Math.floor(n/3600),m=('0'+Math.floor(n/60%60)).slice(-2),s=('0'+Math.floor(n%60)).slice(-2);return (n>3600)?(h+':'+m+':'+s):(m+':'+s);}
+function fmtByte(b,d){if(b==0) return "0 Byte";var k=1024,s=["Bytes","KB","MB","GB","TB","PB"],i=Math.floor(Math.log(b)/Math.log(k));return parseFloat((b/Math.pow(k,i)).toFixed(d))+" "+s[i];}
+function addClass(e, addName){delClass(e,addName);if(e.className==null||e.className==undefined)e.className="";e.className+=" "+addName;return e;}
+function delClass(e, delName){if(e.className==null||e.className==undefined)return e;var a=e.className.split(" ");for(var i=0;i<a.length;i++){if(a[i]==delName)a.splice(i--,1);}e.className = a.join(" ");return e;}
+function getUrlParams(){var p={}, pair=location.search.substring(1).split('&'); for(var i=0; pair[i]; i++){var kv=pair[i].split('='); p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||"");} return p;}
+function getUrlParamsStr(obj){var r=''; for(var p in obj){r+=(r.length==0?'?':'&')+encodeURIComponent(p)+'='+encodeURIComponent(obj[p]);} return r;}
+</script>
+
+<style>
+*,
+*::before,
+*::after   { margin:0; padding:0; box-sizing:border-box; }
+body, html { width:100%; height:100%; background:#333; color:#FFF; overflow:hidden hidden; }
+a     { color:#FC0; }
+a:visited { color:#C90; }
+i     { font-style:normal; }
+b     { font-weight:normal; }
+br    { height:0px; }
+ul    { list-style:none; }
+ol    { margin-left:40px; }
+li    { padding:0.4em; }
+h2    { margin-top:1.2em; }
+textarea { background:#bbb; color:#000; padding:0.4em; }
+
+#main { width:100%; height:100%; }
+#top  { width:100%; height:44px; position:fixed; left:0px; top:0px; background:rgba(0,0,0,0.5);line-height:44px; text-align:center; z-index:2; }
+#mdl  { width:100%; height:calc(100% - 44px); position:absolute; left:0; top:44px; overflow:auto; }
+#btm  { width:100%; height:44px; position:fixed; left:0px; bottom:0px; background:rgba(0,0,0,0.0); z-index:2; overflow:hidden; pointer-events:none; }
+#btm *{ pointer-events:auto; }
+
+.nav       { cursor:pointer; margin:0 8px; }
+.nav input { display:none; }
+.nav input:checked + b { font-weight:bold; line-height:1.2em; border-bottom:2px solid #FC0; }
+
+.page      { max-width:800px; margin:auto; display:none; }
+.content   { padding:5px; }
+.image     { padding:20px; text-align:center; }
+.image img { width:50%; }
+</style>
+<title></title>
+</head>
+<body>
+<div id="main">
+	<div id="top">
+		<label class="nav"><input type="radio" name="nav" value=0><b>概要・使い方</b>
+		</label><label class="nav"><input type="radio" name="nav" value=1><b>仕様</b>
+		</label>
+	</div>
+	<div id="mdl">
+		<div class="page">
+			<div class="content">
+				<h1>imget</h1>
+
+				<h2>概要</h2>
+				<p>
+					ページ内の画像を一覧表示しzipで保存できるブックマークレット。<br>
+					表示部分などはソースをいじれば変えられるので割と適当です。<br>
+				</p>
+				<div class="image">
+					<img src="res/title.jpg"><br>
+					[ 動作イメージ ]
+				</div>
+
+				<h2>使い方</h2>
+				<ol>
+					<li>ブラウザで適当なページをブックマークします</li>
+					<li>そのブックマークを編集します（右クリックメニューなど）</li>
+					<li>ブックマーク名は適当に変更し、「URL」の欄を下記のソースに差し替えて保存します</li>
+					<li>適当なウェブページを開きます</li>
+					<li>先ほど作ったブックマークを使います</li>
+					<li>画面右側に画像一覧が出たら成功！</li>
+				</ol>
+				<p>
+					※ そのページの設定次第で文字やボタンが一部見えにくくなったり、操作しにくくなる場合があります
+				</p>
+
+				<h2>ソース</h2>
+				<button class="copyBtn">コピー</button><br>
+				<textarea class="source copy" rows=8 style="width:100%" readonly>
+javascript:
+(function(){
+	var period=3, fsize=16, log=console.log, id=function(e){return document.getElementById(e)}, cn=function(e){return document.getElementsByClassName(e)}, rm=function(e){if(e)e.parentNode.removeChild(e)}, ce=function(e,i,c,t,s){var r=document.createElement(e);r.id=i;r.className=c;r.innerHTML=t;r.style.cssText=s;return r};
+
+	rm(id("imgetDisp"));
+	var tpl = "<a href='★' target='_blank' style='max-height:600px;overflow-y:auto;display:inline-block;float:left;'><img src='★' style='width:300px;'></a><div style='padding:4px;word-break:break-all;'>■★</div><hr style='clear:both'>";
+	var disp = ce("div", "imgetDisp", null, null, "width:50%; height:90%; overflow-y:scroll; position:absolute; top:0; left:0; z-index:1000000; font-size:"+ fsize +"px; background:rgba(0,0,0,.9); color:#FFF; padding-top:50px;");
+	disp.innerHTML = "<div style='position:fixed;top:0;left:0;'><button id='imgetBtn'>×</button> found: <i id='imgetCnt'>0</i> <button id='imgetZip'>ZIP</button></div>";
+	document.body.insertBefore(disp, document.body.firstChild);
+	id("imgetBtn").onclick = (function(){
+		clearInterval(interval);
+		rm(id("imgetDisp"));
+	});
+
+	var z = id("imgetZip");
+	if(!id("jszip")){
+		var script = ce("script","jszip");
+		script.src = "//cdnjs.cloudflare.com/ajax/libs/jszip/3.5.0/jszip.min.js";
+		document.head.append(script);
+	}
+	z.onclick = async function(){
+		log("IG_ZIP");
+		z.disable = true;
+		var urls = all;
+		var promises = urls.map(
+			(u,i) => new Promise((resolve, reject) => {
+				var x = new XMLHttpRequest();
+				x.open("GET",u,true);
+				x.responseType = "blob";
+				x.onload = function(){
+					var n = u.split("/").pop().replace(/([^\?\.]*)(\.[^\?]*)(\?.*)?$/gi, '$1_'+Date.now()+"_"+i+'$2');
+					resolve({name:n, file:this.response});
+				};
+				x.onerror = x.onabort = x.ontimeout = () => resolve({data:null});
+				x.send();
+			})
+		);
+		(function dl(data){
+			log("IG_DL");
+			var zip=new JSZip(), fn="imget"+Date.now(), f=zip.folder(fn);
+			data.forEach(d => {
+				if(d.file) f.file(d.name, d.file);
+			});
+			zip.generateAsync({type:"blob" }).then(blob => {
+				var a = document.createElement("a");
+				var u = URL.createObjectURL(blob);
+				a.href = u;
+				a.download = fn +".zip";
+				a.style.display = "none";
+				document.body.appendChild(a);
+				a.click();
+				a.remove();
+				setTimeout(function(){
+					URL.revokeObjectURL(u);
+					z.disable = false;
+				}, 1000);
+			});
+		})(await Promise.all(promises));
+	};
+	var all = [];
+	var interval = setInterval(loop, period*1000);
+	setTimeout(loop, 1);
+	function loop(){
+		z.style.display = (typeof JSZip==="function")?"inline":"none";
+		if(!id("imgetDisp")){
+			log("IG_OFF");
+			clearInterval(interval);
+			return;
+		}
+		var img = document.getElementsByTagName("img");
+		for(var i=0; i<img.length; i++){
+			var u = img[i].src;
+			src(u);
+		}
+		var a = document.getElementsByTagName("a");
+		for(var i=0; i<a.length; i++){
+			var u = a[i].href;
+			if(! /.*\.(jpe?g|png|gif|webp)(\?.*)?$/i.test(u)) continue;
+			src(u);
+		}
+		(function bg(e){
+			if(e.style && e.style.backgroundImage){
+				src(e.style.backgroundImage.replace(/url\(("|')(.+)("|')\)/gi, '$2'));
+			}
+			for (var i=0; i<e.childNodes.length; i++){
+				bg(e.childNodes[i]);
+			}
+		})(document.body);
+		function src(u){
+			if(all.indexOf(u)!==-1) return;
+			if(u=="initial") return;
+			all.push(u);
+			var e = new Image();
+			e.onload = (function(){
+				var t = tpl.replace(/★/g, u).replace("■", "[ "+e.naturalWidth+" * "+e.naturalHeight+" ]<br>");
+				var p = ce("p", "", "", t, "");
+				disp.insertBefore(p, disp.children[1]);
+			});
+			e.src = u;
+		}
+		id("imgetCnt").innerHTML = all.length;
+	}
+	log("IG_ON");
+})();				</textarea>
+
+				<h2>更新日</h2>
+				<p>
+					<ul>
+						<li>2022-05-09 このページを作成</li>
+					</ul>
+				</p>
+
+				<h2>書いた人</h2>
+				<p>
+					Ezp!<br>
+					<a href="http://ezp.s17.xrea.com">Gharacter Junktion</a> というサイトでモバイルフラッシュを作って置いてました。(いまはもううごかない)<br>
+					たまに <a href="https://twitter.com/Gharacter">Twitter</a> でなにかしゃべる。
+				</p>
+			</div>
+		</div>
+		<div class="page">
+			<div class="content">
+				<div class="title"><h1>imget</h1></div>
+				<div class="subtitle"><h2>仕様</h2></div>
+				<ul>
+					<li>ページ内に読み込まれた画像を一定間隔で処理する</li>
+					<li>ページ右上に画像一覧表示をする</li>
+					<li>その最上部に「x」(閉じる)ボタン、見つけた画像数、「ZIP」ボタンがある</li>
+					<li>対象画像は「imgタグのsrc」「aタグのhrefが画像拡張子のもの」「background-image」</li>
+					<li>フレームタグ内の画像は非対応(多分)</li>
+					<li>ドメインの異なる画像(外部サイトからリンク表示してる画像)はzip非対応(クロスドメイン問題)</li>
+					<li>zip時、画像ファイル名に現在ミリ秒とナンバリングの文字を付け足す(重複回避)</li>
+					<li>zip生成には「JSZip」というライブラリを使用</li>
+				</ul>
+			</div>
+		</div>
+		<div class="page">
+			<div class="content">
+				<div class="title"><h1>YouTubeComet</h1></div>
+				<div class="subtitle"><h2>参考</h2></div>
+				<ol>
+					<li><a href="https://qiita.com/kerupani129/items/75a10111774aafd9250a" target="_blank">https://qiita.com/kerupani129/items/75a10111774aafd9250a</a></li>
+					<li><a href="https://r17n.page/2020/01/12/js-download-zipped-images-to-local/" target="_blank">https://r17n.page/2020/01/12/js-download-zipped-images-to-local/</a></li>
+				</ol>
+			</div>
+		</div>
+	</div>
+	<div id="btm">
+	</div>
+</div>
+</body>
+</html>
